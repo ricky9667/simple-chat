@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "485846725321",
+    "project_id": "simplechat-329aa",
+    "storage_bucket": "simplechat-329aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:485846725321:android:1e758afb2c57945e7b5318",
+        "android_client_info": {
+          "package_name": "com.rickyhu.simple_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "485846725321-a9565mp2j6o880tomtoto74e5o9sa70f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQae1pDgSCOGv4EoSV2IuRZz2srK8VDY4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "485846725321-a9565mp2j6o880tomtoto74e5o9sa70f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "485846725321-b4lr0ht3kvbirjddbhu81vd5n60l4631.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ricky-hu.simpleChat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

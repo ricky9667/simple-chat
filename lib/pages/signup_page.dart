@@ -1,41 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:queen_validators/queen_validators.dart';
-import 'package:simple_chat/pages/signup_page.dart';
 import 'package:simple_chat/providers/auth_provider.dart';
 
 final _isLoadingProvider = StateProvider.autoDispose<bool>((ref) => false);
 
-class LoginPage extends ConsumerWidget {
-  LoginPage({Key? key}) : super(key: key);
+class SignupPage extends ConsumerWidget {
+  SignupPage({Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordVerificationController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
-  void _loginUser(BuildContext context, WidgetRef ref) async {
+  void _signupUser(BuildContext context, WidgetRef ref) async {
     try {
       if (!_formKey.currentState!.validate()) throw 'Some fields are not valid';
       ref.read(_isLoadingProvider.notifier).state = true;
 
+      final name = _nameController.text;
       final email = _emailController.text;
       final password = _passwordController.text;
-      await ref.read(authProvider.notifier).login(email, password);
+      await ref.read(authProvider.notifier).signUp(email, password, name);
+      Navigator.of(context).pop();
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed: $error')),
+        SnackBar(content: Text('Signup failed: $error')),
       );
     } finally {
       ref.read(_isLoadingProvider.notifier).state = false;
+      _nameController.text = '';
       _emailController.text = '';
       _passwordController.text = '';
+      _passwordVerificationController.text = '';
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = ref.watch(_isLoadingProvider);
-
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -49,11 +53,9 @@ class LoginPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Simple Chat',
+                    'Create an account',
                     style: Theme.of(context).textTheme.headline4!.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 12),
-                  const Text('Please login/signup an account'),
                   const SizedBox(height: 36),
                   TextFormField(
                     controller: _emailController,
@@ -82,7 +84,28 @@ class LoginPage extends ConsumerWidget {
                       MaxLength(20),
                     ]),
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _passwordVerificationController,
+                    enabled: !isLoading,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.lock_outline),
+                      labelText: 'Confirm password',
+                    ),
+                    validator: (value) => value != _passwordController.text ? 'Password is not identical' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _nameController,
+                    enabled: !isLoading,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.account_circle_outlined),
+                      labelText: 'Name',
+                    ),
+                    validator: qValidator([IsRequired()]),
+                  ),
+                  const SizedBox(height: 32),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,18 +113,16 @@ class LoginPage extends ConsumerWidget {
                       Expanded(
                         flex: 1,
                         child: OutlinedButton(
-                          onPressed: isLoading
-                              ? null
-                              : () => Navigator.push(context, MaterialPageRoute(builder: (context) => SignupPage())),
-                          child: const Text('Signup new account'),
+                          onPressed: isLoading ? null : () => Navigator.of(context).pop(),
+                          child: const Text('Back to login'),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         flex: 1,
                         child: ElevatedButton(
-                          onPressed: isLoading ? null : () => _loginUser(context, ref),
-                          child: const Text('Login'),
+                          onPressed: isLoading ? null : () => _signupUser(context, ref),
+                          child: const Text('Signup'),
                         ),
                       ),
                     ],
