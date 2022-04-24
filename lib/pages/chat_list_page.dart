@@ -88,7 +88,10 @@ class ChatListPage extends ConsumerWidget {
                 leading: const Icon(Icons.account_circle, size: 40),
                 title: Text(chatRoom.name),
                 subtitle: Text('$lastMessage'),
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoomPage())),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChatRoomPage(chatRoomId: chatRoom.id)),
+                ),
               );
             },
           ),

@@ -7,12 +7,14 @@ import 'package:uuid/uuid.dart';
 class FirebaseDataRepository extends DataRepository {
   final _firestore = FirebaseFirestore.instance;
 
-  CollectionReference<User> get _usersRef => _firestore.collection('users').withConverter<User>(
+  CollectionReference<User> get _usersRef =>
+      _firestore.collection('users').withConverter<User>(
         fromFirestore: (snapshot, options) => User.fromJson(snapshot.data()!),
         toFirestore: (user, options) => user.toJson(),
       );
 
-  CollectionReference<ChatRoom> get _chatRoomsRef => _firestore.collection('chatrooms').withConverter<ChatRoom>(
+  CollectionReference<ChatRoom> get _chatRoomsRef =>
+      _firestore.collection('chatrooms').withConverter<ChatRoom>(
         fromFirestore: (snapshot, options) => ChatRoom.fromJson(snapshot.data()!),
         toFirestore: (chatroom, options) => chatroom.toJson(),
       );
@@ -26,6 +28,11 @@ class FirebaseDataRepository extends DataRepository {
   @override
   Future<void> submitNewUser({required User user}) async {
     await _usersRef.doc(user.id).set(user);
+  }
+
+  @override
+  Stream<ChatRoom> getChatRoom({required String chatRoomId}) {
+    return _chatRoomsRef.doc(chatRoomId).snapshots().map((snapshot) => snapshot.data()!);
   }
 
   @override
