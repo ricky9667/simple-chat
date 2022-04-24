@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:simple_chat/widgets/message_box.dart';
 
-class ChatroomPage extends StatefulWidget {
-  const ChatroomPage({Key? key}) : super(key: key);
+class ChatRoomPage extends StatefulWidget {
+  const ChatRoomPage({Key? key}) : super(key: key);
 
   @override
-  State<ChatroomPage> createState() => _ChatroomPageState();
+  State<ChatRoomPage> createState() => _ChatRoomPageState();
 }
 
-class _ChatroomPageState extends State<ChatroomPage> {
+class _ChatRoomPageState extends State<ChatRoomPage> {
   final _textController = TextEditingController();
   final _messageScrollController = ScrollController();
   final List<String> _messageList = [

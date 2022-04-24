@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_chat/widgets/auth_page_handler.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:simple_chat/pages/chatroom_page.dart';
-import 'package:simple_chat/pages/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
