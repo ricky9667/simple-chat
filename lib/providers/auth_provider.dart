@@ -1,12 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_chat/models/user.dart';
 import 'package:simple_chat/repositories/auth/firebase_auth_repository.dart';
+import 'package:simple_chat/repositories/data/firebase_data_repository.dart';
 
 class Auth {
   final bool isInitialized;
   final bool isLoggedIn;
+  final User? currentUser;
 
-  const Auth({required this.isInitialized, required this.isLoggedIn});
+  const Auth({required this.isInitialized, required this.isLoggedIn, User? user}) : currentUser = user;
 
   Auth copyWith({bool? isInitialized, bool? isLoggedIn, User? user}) {
     return Auth(
@@ -22,21 +24,20 @@ class AuthNotifier extends StateNotifier<Auth> {
   }
 
   void initialize() async {
-    if (firebaseAuthRepository.isLoggedIn) {
-      state = const Auth(isInitialized: true, isLoggedIn: true);
-    } else {
-      state = const Auth(isInitialized: true, isLoggedIn: false);
-    }
+    state = Auth(isInitialized: true, isLoggedIn: firebaseAuthRepository.isLoggedIn);
   }
 
   Future<void> signUp(String email, String password, String name) async {
     await firebaseAuthRepository.signUp(email, password);
+    final user = User(id: firebaseAuthRepository.id, email: firebaseAuthRepository.email, name: name);
+    await firebaseDataRepository.submitNewUser(user: user);
     state = state.copyWith(isLoggedIn: true);
   }
 
   Future<void> login(String email, String password) async {
     await firebaseAuthRepository.login(email, password);
-    state = state.copyWith(isLoggedIn: true);
+    final user = await firebaseDataRepository.getUser(id: firebaseAuthRepository.id);
+    state = state.copyWith(isLoggedIn: true, user: user);
   }
 
   void logout() {
