@@ -6,5 +6,6 @@ abstract class DataRepository {
   Future<void> submitNewUser({required User user});
   Stream<List<ChatRoom>> getChatRooms({required String userId});
   Stream<ChatRoom> getChatRoom({required String chatRoomId});
-  Future<void> createChatroom({required String name, required List<String> userIdList});
+  Future<void> createChatRoom({required String name, required List<String> userIdList});
+  Future<void> addUserToChatRoom({required String chatRoomId, required String userEmail});
 }

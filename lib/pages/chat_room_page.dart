@@ -8,8 +8,9 @@ import 'package:simple_chat/widgets/message_box.dart';
 
 class ChatRoomPage extends ConsumerStatefulWidget {
   final String chatRoomId;
+  final String chatRoomName;
 
-  const ChatRoomPage({Key? key, required this.chatRoomId}) : super(key: key);
+  const ChatRoomPage({Key? key, required this.chatRoomId, required this.chatRoomName}) : super(key: key);
 
   @override
   _ChatRoomPageState createState() => _ChatRoomPageState();
@@ -42,11 +43,70 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
     // _scrollToBottom();
   }
 
+  void _showAddUserToChatRoomDialog(BuildContext context) async {
+    final userEmailController = TextEditingController();
+
+    final dialogResult = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add user to chat room'),
+          content: TextFormField(
+            controller: userEmailController,
+            decoration: const InputDecoration(labelText: 'Email'),
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(null),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (dialogResult == null) return;
+    try {
+      if (userEmailController.text.trim() == '') throw 'Email cannot be empty';
+      await firebaseDataRepository.addUserToChatRoom(
+        chatRoomId: chatRoomId,
+        userEmail: userEmailController.text,
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Add user failed: $error')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Name'),
+        title: Text(widget.chatRoomName),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (context) => [
+              const PopupMenuItem<int>(value: 0, child: Text('Add user')),
+              const PopupMenuItem<int>(value: 1, child: Text('Show users')),
+            ],
+            onSelected: (value) {
+              if (value == 0) {
+                _showAddUserToChatRoomDialog(context);
+              } else if (value == 1) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Feature in development')),
+                );
+              }
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: Container(

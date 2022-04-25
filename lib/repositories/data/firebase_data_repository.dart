@@ -7,14 +7,12 @@ import 'package:uuid/uuid.dart';
 class FirebaseDataRepository extends DataRepository {
   final _firestore = FirebaseFirestore.instance;
 
-  CollectionReference<User> get _usersRef =>
-      _firestore.collection('users').withConverter<User>(
+  CollectionReference<User> get _usersRef => _firestore.collection('users').withConverter<User>(
         fromFirestore: (snapshot, options) => User.fromJson(snapshot.data()!),
         toFirestore: (user, options) => user.toJson(),
       );
 
-  CollectionReference<ChatRoom> get _chatRoomsRef =>
-      _firestore.collection('chatrooms').withConverter<ChatRoom>(
+  CollectionReference<ChatRoom> get _chatRoomsRef => _firestore.collection('chatrooms').withConverter<ChatRoom>(
         fromFirestore: (snapshot, options) => ChatRoom.fromJson(snapshot.data()!),
         toFirestore: (chatroom, options) => chatroom.toJson(),
       );
@@ -44,10 +42,22 @@ class FirebaseDataRepository extends DataRepository {
   }
 
   @override
-  Future<void> createChatroom({required String name, required List<String> userIdList}) async {
+  Future<void> createChatRoom({required String name, required List<String> userIdList}) async {
     final chatRoomId = const Uuid().v4();
     final chatRoom = ChatRoom(id: chatRoomId, users: userIdList, name: name);
     await _chatRoomsRef.doc(chatRoomId).set(chatRoom);
+  }
+
+  @override
+  Future<void> addUserToChatRoom({required String chatRoomId, required String userEmail}) async {
+    final userId =
+        await _usersRef.where('email', isEqualTo: userEmail).get().then((snapshot) => snapshot.docs.single.id);
+    final chatRoom = await _chatRoomsRef.doc(chatRoomId).get().then((value) => value.data()!);
+    if (chatRoom.users.contains(userId)) throw 'User already exists';
+
+    await _chatRoomsRef.doc(chatRoomId).update({
+      'users': [...chatRoom.users, userId],
+    });
   }
 }
 

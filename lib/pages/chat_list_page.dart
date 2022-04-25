@@ -8,7 +8,6 @@ import 'package:simple_chat/repositories/data/firebase_data_repository.dart';
 
 final _chatRoomsProvider = StreamProvider((ref) {
   final user = ref.watch(authProvider).user;
-  print('Current user: ${user.id}');
   return firebaseDataRepository.getChatRooms(userId: user.id);
 });
 
@@ -44,10 +43,17 @@ class ChatListPage extends ConsumerWidget {
     );
 
     if (dialogResult == null) return;
-    await firebaseDataRepository.createChatroom(
-      name: roomNameController.text.trim(),
-      userIdList: [firebaseAuthRepository.id],
-    );
+
+    try {
+      await firebaseDataRepository.createChatRoom(
+        name: roomNameController.text.trim(),
+        userIdList: [firebaseAuthRepository.id],
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Create chat room failed: $error')),
+      );
+    }
   }
 
   @override
@@ -61,10 +67,7 @@ class ChatListPage extends ConsumerWidget {
           actions: [
             PopupMenuButton(
               itemBuilder: (context) => [
-                const PopupMenuItem<int>(
-                  value: 0,
-                  child: Text('Sign out'),
-                ),
+                const PopupMenuItem<int>(value: 0, child: Text('Sign out')),
               ],
               onSelected: (value) {
                 if (value == 0) {
@@ -90,7 +93,12 @@ class ChatListPage extends ConsumerWidget {
                 subtitle: Text('$lastMessage'),
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ChatRoomPage(chatRoomId: chatRoom.id)),
+                  MaterialPageRoute(
+                    builder: (context) => ChatRoomPage(
+                      chatRoomId: chatRoom.id,
+                      chatRoomName: chatRoom.name,
+                    ),
+                  ),
                 ),
               );
             },
