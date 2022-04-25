@@ -1,16 +1,21 @@
-# simple_chat
+# Simple Chat
 
-A new Flutter project.
+A simple chat app developed with Flutter.
 
-## Getting Started
+## References
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Frameworks and services
+  - [Flutter](https://flutter.dev)
+  - [Firebase](https://firebase.google.com)
+    - [FlutterFire Documentation](https://firebase.flutter.dev)
+  - [Riverpod](https://riverpod.dev)
+- Packages
+  - [flutter_riverpod](https://pub.dev/packages/flutter_riverpod)
+  - [firebase_core](https://pub.dev/packages/firebase_core)
+  - [firebase_auth](https://pub.dev/packages/firebase_auth)
+  - [cloud_firestore](https://pub.dev/packages/cloud_firestore)
+  - [freezed](https://pub.dev/packages/freezed)
+  - [uuid](https://pub.dev/packages/uuid)
+  - [intl](https://pub.dev/packages/intl)
+  - [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons)
+- [Launcher Icon](https://www.flaticon.com/free-icon/comments_2190552?term=message&page=1&position=19&page=1&position=19&related_id=2190552&origin=search)
