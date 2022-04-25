@@ -94,12 +94,8 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(null),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Add'),
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Ok'),
             ),
           ],
         );
