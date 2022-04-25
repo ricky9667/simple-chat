@@ -5,6 +5,7 @@ import 'package:simple_chat/pages/loading_page.dart';
 import 'package:simple_chat/providers/auth_provider.dart';
 import 'package:simple_chat/repositories/auth/firebase_auth_repository.dart';
 import 'package:simple_chat/repositories/data/firebase_data_repository.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final _chatRoomsProvider = StreamProvider((ref) {
   final user = ref.watch(authProvider).user;
@@ -56,6 +57,8 @@ class ChatListPage extends ConsumerWidget {
       );
     }
   }
+
+  Future<void> _openGithubRepository() async {}
 
   void _showProfileDialog(BuildContext context) async {
     final user = await firebaseDataRepository.getUser(userId: firebaseAuthRepository.id);
@@ -124,15 +127,21 @@ class ChatListPage extends ConsumerWidget {
           actions: [
             PopupMenuButton(
               itemBuilder: (context) => [
-                const PopupMenuItem<int>(value: 0, child: Text('Show profile')),
-                const PopupMenuItem<int>(value: 1, child: Text('Sign out')),
+                const PopupMenuItem<int>(value: 0, child: Text('About')),
+                const PopupMenuItem<int>(value: 1, child: Text('Show profile')),
+                const PopupMenuItem<int>(value: 2, child: Text('Sign out')),
               ],
-              onSelected: (value) {
+              onSelected: (value) async {
                 switch (value) {
                   case 0:
-                    _showProfileDialog(context);
+                    if (!await launchUrl(Uri.parse('https://github.com/ricky9667/simple-chat'))) {
+                      throw 'Could not launch website';
+                    }
                     break;
                   case 1:
+                    _showProfileDialog(context);
+                    break;
+                  case 2:
                     ref.read(authProvider.notifier).logout();
                     break;
                 }
@@ -157,7 +166,7 @@ class ChatListPage extends ConsumerWidget {
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final chatRoom = data[index];
-                    final lastMessage = chatRoom.messages.isEmpty ? 'Empty' : chatRoom.messages.last['text'];
+                    final lastMessage = chatRoom.messages.isEmpty ? '(Empty)' : chatRoom.messages.last['text'];
                     return ListTile(
                       leading: const Icon(Icons.account_circle, size: 40),
                       title: Text(chatRoom.name),

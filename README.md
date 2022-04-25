@@ -19,4 +19,6 @@ A simple chat app developed with Flutter.
   - [intl](https://pub.dev/packages/intl)
   - [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons)
   - [queen_validators](https://pub.dev/packages/queen_validators)
+  - [url_launcher](https://pub.dev/packages/url_launcher)
 - [Launcher Icon](https://www.flaticon.com/free-icon/comments_2190552?term=message&page=1&position=19&page=1&position=19&related_id=2190552&origin=search)
+  - **Please contact me if there are any copyright issues.**
