@@ -8,10 +8,9 @@ import 'package:simple_chat/repositories/data/firebase_data_repository.dart';
 import 'package:simple_chat/widgets/message_box.dart';
 
 class ChatRoomPage extends ConsumerStatefulWidget {
-  final String chatRoomId;
-  final String chatRoomName;
+  final ChatRoom chatRoom;
 
-  const ChatRoomPage({Key? key, required this.chatRoomId, required this.chatRoomName}) : super(key: key);
+  const ChatRoomPage({Key? key, required this.chatRoom}) : super(key: key);
 
   @override
   _ChatRoomPageState createState() => _ChatRoomPageState();
@@ -22,7 +21,13 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
   final _messageScrollController = ScrollController();
   final Map<String, User> _chatRoomUsers = {};
 
-  String get chatRoomId => widget.chatRoomId;
+  String get chatRoomId => widget.chatRoom.id;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateChatRoomUsersData(widget.chatRoom.users).then((value) => null);
+  }
 
   void _showAddUserToChatRoomDialog(BuildContext context) async {
     final userEmailController = TextEditingController();
@@ -124,6 +129,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
   Future<void> _updateChatRoomUsersData(List<String> userIdList) async {
     _chatRoomUsers.clear();
     for (final userId in userIdList) {
+      print(userId);
       final user = await firebaseDataRepository.getUser(userId: userId);
       _chatRoomUsers[userId] = user;
     }
@@ -133,6 +139,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
   Widget build(BuildContext context) {
     return StreamBuilder<ChatRoom>(
       stream: firebaseDataRepository.getChatRoom(chatRoomId: chatRoomId),
+      initialData: widget.chatRoom,
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == null) {
           return const LoadingPage();
@@ -187,11 +194,14 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                         child: Column(
                           children: chatRoom.messages
                               .map(
-                                (value) => MessageBox(
-                                  message: value['text'],
-                                  time: value['time'],
-                                  isSelf: value['user'] == firebaseAuthRepository.id,
-                                ),
+                                (value) {
+                                  return MessageBox(
+                                    message: value['text'],
+                                    name: 'Name',
+                                    time: value['time'],
+                                    isSelf: value['user'] == firebaseAuthRepository.id,
+                                  );
+                                }
                               )
                               .toList(),
                         ),

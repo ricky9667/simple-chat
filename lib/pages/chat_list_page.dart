@@ -130,10 +130,7 @@ class ChatListPage extends ConsumerWidget {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChatRoomPage(
-                      chatRoomId: chatRoom.id,
-                      chatRoomName: chatRoom.name,
-                    ),
+                    builder: (context) => ChatRoomPage(chatRoom: chatRoom),
                   ),
                 ),
               );
