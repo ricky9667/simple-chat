@@ -16,24 +16,28 @@ class SignupPage extends ConsumerWidget {
 
   void _signupUser(BuildContext context, WidgetRef ref) async {
     try {
+      _nameController.text = _nameController.text.trim();
+      _emailController.text = _emailController.text.trim();
+      _passwordController.text = _passwordController.text.trim();
       if (!_formKey.currentState!.validate()) throw 'Some fields are not valid';
-      ref.read(_isLoadingProvider.notifier).state = true;
 
+      ref.read(_isLoadingProvider.notifier).state = true;
       final name = _nameController.text;
       final email = _emailController.text;
       final password = _passwordController.text;
       await ref.read(authProvider.notifier).signUp(email, password, name);
+
       Navigator.of(context).pop();
+      _nameController.text = '';
+      _emailController.text = '';
+      _passwordController.text = '';
+      _passwordVerificationController.text = '';
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Signup failed: $error')),
       );
     } finally {
       ref.read(_isLoadingProvider.notifier).state = false;
-      _nameController.text = '';
-      _emailController.text = '';
-      _passwordController.text = '';
-      _passwordVerificationController.text = '';
     }
   }
 

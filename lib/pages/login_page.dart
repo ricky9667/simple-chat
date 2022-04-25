@@ -15,20 +15,24 @@ class LoginPage extends ConsumerWidget {
 
   void _loginUser(BuildContext context, WidgetRef ref) async {
     try {
+      _emailController.text = _emailController.text.trim();
+      _passwordController.text = _passwordController.text.trim();
       if (!_formKey.currentState!.validate()) throw 'Some fields are not valid';
-      ref.read(_isLoadingProvider.notifier).state = true;
 
+      ref.read(_isLoadingProvider.notifier).state = true;
       final email = _emailController.text;
       final password = _passwordController.text;
       await ref.read(authProvider.notifier).login(email, password);
+
+      _emailController.text = '';
+      _passwordController.text = '';
+      ref.read(_isLoadingProvider.notifier).state = false;
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login failed: $error')),
       );
     } finally {
       ref.read(_isLoadingProvider.notifier).state = false;
-      _emailController.text = '';
-      _passwordController.text = '';
     }
   }
 

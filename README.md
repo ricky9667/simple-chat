@@ -18,4 +18,5 @@ A simple chat app developed with Flutter.
   - [uuid](https://pub.dev/packages/uuid)
   - [intl](https://pub.dev/packages/intl)
   - [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons)
+  - [queen_validators](https://pub.dev/packages/queen_validators)
 - [Launcher Icon](https://www.flaticon.com/free-icon/comments_2190552?term=message&page=1&position=19&page=1&position=19&related_id=2190552&origin=search)
