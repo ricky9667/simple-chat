@@ -56,6 +56,36 @@ class ChatListPage extends ConsumerWidget {
     }
   }
 
+  void _showProfileDialog(BuildContext context) async {
+    final user = await firebaseDataRepository.getUser(userId: firebaseAuthRepository.id);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Your Profile'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Name: ${user.name}'),
+                const SizedBox(height: 12),
+                Text('Email: ${user.email}'),
+                const SizedBox(height: 12),
+                Text('Uid: ${user.id}'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chatRooms = ref.watch(_chatRoomsProvider);
@@ -67,11 +97,17 @@ class ChatListPage extends ConsumerWidget {
           actions: [
             PopupMenuButton(
               itemBuilder: (context) => [
-                const PopupMenuItem<int>(value: 0, child: Text('Sign out')),
+                const PopupMenuItem<int>(value: 0, child: Text('Show profile')),
+                const PopupMenuItem<int>(value: 1, child: Text('Sign out')),
               ],
               onSelected: (value) {
-                if (value == 0) {
-                  ref.read(authProvider.notifier).logout();
+                switch (value) {
+                  case 0:
+                    _showProfileDialog(context);
+                    break;
+                  case 1:
+                    ref.read(authProvider.notifier).logout();
+                    break;
                 }
               },
             ),
