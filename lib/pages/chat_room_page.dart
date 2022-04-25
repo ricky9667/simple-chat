@@ -26,7 +26,10 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
   @override
   void initState() {
     super.initState();
-    _updateChatRoomUsersData(widget.chatRoom.users).then((value) => null);
+    // _updateChatRoomUsersData(widget.chatRoom.users).then((value) => null);
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      _messageScrollController.jumpTo(_messageScrollController.position.maxScrollExtent);
+    });
   }
 
   void _showAddUserToChatRoomDialog(BuildContext context) async {
@@ -113,23 +116,21 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
       userId: firebaseAuthRepository.id,
       text: text,
     );
-    setState(() => _textController.text = '');
-  }
-
-  void _scrollToBottom() {
-    // if (_messageList.isNotEmpty) {
-    //   _messageScrollController.animateTo(
-    //     _messageScrollController.position.maxScrollExtent,
-    //     duration: const Duration(seconds: 1),
-    //     curve: Curves.fastOutSlowIn,
-    //   );
-    // }
+    setState(() {
+      _textController.text = '';
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        _messageScrollController.animateTo(
+          _messageScrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.fastOutSlowIn,
+        );
+      });
+    });
   }
 
   Future<void> _updateChatRoomUsersData(List<String> userIdList) async {
     _chatRoomUsers.clear();
     for (final userId in userIdList) {
-      print(userId);
       final user = await firebaseDataRepository.getUser(userId: userId);
       _chatRoomUsers[userId] = user;
     }
@@ -145,14 +146,6 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
           return const LoadingPage();
         } else if (snapshot.hasError) {
           return const Center(child: Text('An error has occurred...'));
-        } else if (snapshot.data!.messages.isEmpty) {
-          return Center(
-            child: Text(
-              'Chat room is empty! Type something below!',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            ),
-          );
         } else {
           final chatRoom = snapshot.data!;
           _updateChatRoomUsersData(chatRoom.users);
@@ -189,23 +182,27 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                   children: [
                     Expanded(
                       flex: 9,
-                      child: SingleChildScrollView(
-                        controller: _messageScrollController,
-                        child: Column(
-                          children: chatRoom.messages
-                              .map(
-                                (value) {
+                      child: snapshot.data!.messages.isEmpty
+                          ? Center(
+                              child: Text(
+                                'Chat room is empty! Type something below!',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                            )
+                          : SingleChildScrollView(
+                              controller: _messageScrollController,
+                              child: Column(
+                                children: chatRoom.messages.map((value) {
                                   return MessageBox(
                                     message: value['text'],
                                     name: 'Name',
                                     time: value['time'],
                                     isSelf: value['user'] == firebaseAuthRepository.id,
                                   );
-                                }
-                              )
-                              .toList(),
-                        ),
-                      ),
+                                }).toList(),
+                              ),
+                            ),
                     ),
                     const SizedBox(height: 12),
                     Row(
