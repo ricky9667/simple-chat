@@ -80,6 +80,22 @@ class FirebaseDataRepository extends DataRepository {
   Future<void> deleteChatRoom({required String chatRoomId}) async {
     await _chatRoomsRef.doc(chatRoomId).delete();
   }
+
+  @override
+  Future<void> leaveChatRoom({required String chatRoomId, required String userId}) async {
+    final chatRoom = await _chatRoomsRef.doc(chatRoomId).get().then((value) => value.data()!);
+    List chatRoomUsers = [...chatRoom.users];
+
+    if (chatRoomUsers.length <= 1) {
+      await _chatRoomsRef.doc(chatRoomId).delete();
+    } else {
+      final removeResult = chatRoomUsers.remove(userId);
+      if (!removeResult) throw 'User is not in room list';
+      await _chatRoomsRef.doc(chatRoomId).update({
+        'users': chatRoomUsers,
+      });
+    }
+  }
 }
 
 final firebaseDataRepository = FirebaseDataRepository();

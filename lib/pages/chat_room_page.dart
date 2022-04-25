@@ -75,7 +75,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
   }
 
   void _showChatRoomUsersDialog(BuildContext context) {
-    showDialog<bool>(
+    showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -96,6 +96,34 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLeaveRoomDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Chat room users'),
+          content: const SingleChildScrollView(
+            child: Text('Are you sure you want to leave this chat room?'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await firebaseDataRepository.leaveChatRoom(chatRoomId: chatRoomId, userId: firebaseAuthRepository.id);
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Leave', style: TextStyle(color: Colors.red)),
             ),
           ],
         );
@@ -154,6 +182,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                   itemBuilder: (context) => [
                     const PopupMenuItem<int>(value: 0, child: Text('Add user')),
                     const PopupMenuItem<int>(value: 1, child: Text('Show users')),
+                    const PopupMenuItem<int>(value: 2, child: Text('Leave room')),
                   ],
                   onSelected: (value) {
                     switch (value) {
@@ -162,6 +191,9 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                         break;
                       case 1:
                         _showChatRoomUsersDialog(context);
+                        break;
+                      case 2:
+                        _showLeaveRoomDialog(context);
                         break;
                     }
                   },

@@ -10,4 +10,5 @@ abstract class DataRepository {
   Future<void> addUserToChatRoom({required String chatRoomId, required String userEmail});
   Future<void> sendMessage({required String chatRoomId, required String userId, required String text});
   Future<void> deleteChatRoom({required String chatRoomId});
+  Future<void> leaveChatRoom({required String chatRoomId, required String userId});
 }
