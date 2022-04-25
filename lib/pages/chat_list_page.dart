@@ -145,25 +145,33 @@ class ChatListPage extends ConsumerWidget {
           onPressed: () => _createChatroom(context),
         ),
         body: SafeArea(
-          child: ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              final chatRoom = data[index];
-              final lastMessage = chatRoom.messages.isEmpty ? 'Empty' : chatRoom.messages.last['text'];
-              return ListTile(
-                leading: const Icon(Icons.account_circle, size: 40),
-                title: Text(chatRoom.name),
-                subtitle: Text('$lastMessage'),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatRoomPage(chatRoom: chatRoom),
+          child: data.isEmpty
+              ? Center(
+                  child: Text(
+                    'Add a new chat room from the + button below!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[600]),
                   ),
+                )
+              : ListView.builder(
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    final chatRoom = data[index];
+                    final lastMessage = chatRoom.messages.isEmpty ? 'Empty' : chatRoom.messages.last['text'];
+                    return ListTile(
+                      leading: const Icon(Icons.account_circle, size: 40),
+                      title: Text(chatRoom.name),
+                      subtitle: Text('$lastMessage'),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatRoomPage(chatRoom: chatRoom),
+                        ),
+                      ),
+                      onLongPress: () => _showDeleteChatRoomDialog(context, chatRoom.id),
+                    );
+                  },
                 ),
-                onLongPress: () => _showDeleteChatRoomDialog(context, chatRoom.id),
-              );
-            },
-          ),
         ),
       ),
       error: (error, _) => SelectableText('Load courses error: $error'),
