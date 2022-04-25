@@ -45,6 +45,7 @@ class ChatListPage extends ConsumerWidget {
     if (dialogResult == null) return;
 
     try {
+      if (roomNameController.text.trim() == '') throw 'Room name cannot be empty';
       await firebaseDataRepository.createChatRoom(
         name: roomNameController.text.trim(),
         userIdList: [firebaseAuthRepository.id],
