@@ -32,15 +32,16 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
     // }
   }
 
-  void _submitText() {
-    // final text = _textController.text.trim();
-    // if (text == '') return;
-    //
-    // setState(() {
-    //   _messageList.add(text);
-    //   _textController.text = '';
-    // });
-    // _scrollToBottom();
+  void _submitText() async {
+    final text = _textController.text.trim();
+    if (text == '') return;
+
+    await firebaseDataRepository.sendMessage(
+      chatRoomId: chatRoomId,
+      userId: firebaseAuthRepository.id,
+      text: text,
+    );
+    setState(() => _textController.text = '');
   }
 
   void _showAddUserToChatRoomDialog(BuildContext context) async {
@@ -136,6 +137,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                               .map(
                                 (value) => MessageBox(
                                   message: value['text'],
+                                  time: value['time'],
                                   isSelf: value['user'] == firebaseAuthRepository.id,
                                 ),
                               )
@@ -153,26 +155,6 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                     }
                   },
                 ),
-                // child: Builder(
-                //   builder: (context) {
-                //     if (_messageList.isNotEmpty) {
-                //       return SingleChildScrollView(
-                //         controller: _messageScrollController,
-                //         child: Column(
-                //           children: _messageList.map((value) => MessageBox(message: value, isSelf: true)).toList(),
-                //         ),
-                //       );
-                //     } else {
-                //       return Center(
-                //         child: Text(
-                //           'Chat room is empty! Type something below!',
-                //           textAlign: TextAlign.center,
-                //           style: TextStyle(fontSize: 10, color: Colors.grey[600]),
-                //         ),
-                //       );
-                //     }
-                //   },
-                // ),
               ),
               const SizedBox(height: 12),
               Row(
@@ -200,7 +182,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                         Icons.send,
                         color: Colors.blue,
                       ),
-                      onPressed: () => _submitText(),
+                      onPressed: () async => _submitText(),
                     ),
                   ),
                 ],

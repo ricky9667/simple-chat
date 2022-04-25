@@ -52,11 +52,27 @@ class FirebaseDataRepository extends DataRepository {
   Future<void> addUserToChatRoom({required String chatRoomId, required String userEmail}) async {
     final userId =
         await _usersRef.where('email', isEqualTo: userEmail).get().then((snapshot) => snapshot.docs.single.id);
+
     final chatRoom = await _chatRoomsRef.doc(chatRoomId).get().then((value) => value.data()!);
     if (chatRoom.users.contains(userId)) throw 'User already exists';
 
     await _chatRoomsRef.doc(chatRoomId).update({
       'users': [...chatRoom.users, userId],
+    });
+  }
+
+  @override
+  Future<void> sendMessage({required String chatRoomId, required String userId, required String text}) async {
+    final chatRoom = await _chatRoomsRef.doc(chatRoomId).get().then((value) => value.data()!);
+
+    final Map<String, dynamic> message = {
+      'user': userId,
+      'text': text,
+      'time': Timestamp.fromDate(DateTime.now()),
+    };
+
+    await _chatRoomsRef.doc(chatRoomId).update({
+      'messages': [...chatRoom.messages, message],
     });
   }
 }

@@ -86,7 +86,7 @@ class ChatListPage extends ConsumerWidget {
             itemCount: data.length,
             itemBuilder: (context, index) {
               final chatRoom = data[index];
-              final lastMessage = chatRoom.messages.isEmpty ? '(Empty)' : chatRoom.messages.last;
+              final lastMessage = chatRoom.messages.isEmpty ? 'Empty' : chatRoom.messages.last['text'];
               return ListTile(
                 leading: const Icon(Icons.account_circle, size: 40),
                 title: Text(chatRoom.name),
