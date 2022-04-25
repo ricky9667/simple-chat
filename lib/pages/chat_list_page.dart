@@ -86,6 +86,32 @@ class ChatListPage extends ConsumerWidget {
     );
   }
 
+  void _showDeleteChatRoomDialog(BuildContext context, String chatRoomId) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete chat room'),
+          content: const SingleChildScrollView(
+            child: Text(
+              'Are you sure?\nAll your messages will be deleted.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                firebaseDataRepository.deleteChatRoom(chatRoomId: chatRoomId);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chatRooms = ref.watch(_chatRoomsProvider);
@@ -133,6 +159,7 @@ class ChatListPage extends ConsumerWidget {
                     builder: (context) => ChatRoomPage(chatRoom: chatRoom),
                   ),
                 ),
+                onLongPress: () => _showDeleteChatRoomDialog(context, chatRoom.id),
               );
             },
           ),

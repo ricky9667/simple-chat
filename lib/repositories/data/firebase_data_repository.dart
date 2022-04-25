@@ -75,6 +75,11 @@ class FirebaseDataRepository extends DataRepository {
       'messages': [...chatRoom.messages, message],
     });
   }
+
+  @override
+  Future<void> deleteChatRoom({required String chatRoomId}) async {
+    await _chatRoomsRef.doc(chatRoomId).delete();
+  }
 }
 
 final firebaseDataRepository = FirebaseDataRepository();
